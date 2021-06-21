@@ -1,0 +1,9 @@
+body {
+    background-color: rgb(36, 30, 36);
+}
+
+canvas {
+    padding: 0;
+    display:block;
+    margin: 0 auto;
+}

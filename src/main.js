@@ -2,6 +2,7 @@
 import DynamicElements from "./dynamicElements.js";
 import DisplayObject from "./displayObject.js";
 import Wall from "./wall.js";
+import Food from "./food.js";
 import {
     atlas
 } from "../atlas.js";
@@ -9,7 +10,8 @@ export {
     context,
     spriteSheet,
     size,
-    directionEnum
+    directionEnum,
+    walls
 };
 
 const canvas = document.createElement("canvas");
@@ -20,8 +22,8 @@ const directionEnum = Object.freeze({
     RIGHT: "right",
     DOWN: "down"
 });
-canvas.width = 700;
-canvas.height = 700;
+canvas.width = 500;
+canvas.height = 500;
 
 const size = 2;
 
@@ -42,13 +44,13 @@ const bananaGhost = new DynamicElements(atlas.bananaGhost, atlas.position.banana
 const walls = [];
 atlas.maze.walls.forEach(element => {
     walls.push(new Wall(element));
-    
+
 });
 console.log(walls);
 
 let foods = [];
 atlas.maze.foods.forEach(atlasFood => {
-    foods.push(new DisplayObject(
+    foods.push(new Food(
         atlasFood.x,
         atlasFood.y,
         atlasFood.width,
@@ -57,6 +59,7 @@ atlas.maze.foods.forEach(atlasFood => {
         atlasFood.y
     ));
 });
+console.log(foods);
 
 spriteSheet.onload = (timestamp) => {
     console.log(timestamp);
@@ -87,18 +90,16 @@ function drawBackground() {
 
 function drawFood() {
     for (let i = 0; i < foods.length; i++) {
-        foods[i].draw();
+        if (foods[i].collisionCheck(pacman)) {
+            foods.splice(i, 1);
+        } else {
+            foods[i].draw();
+        }
     }
 }
 
 function drawPacman(timestamp) {
     pacman.drawAnimation(timestamp);
-    walls.forEach(wall => {
-        if (wall.collisionCheck(pacman)) {
-            pacman.direction = null;
-            console.log("COLLISION");
-        }
-    });
 }
 
 function drawRedGhost(timestamp) {
