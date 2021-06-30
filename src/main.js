@@ -1,6 +1,7 @@
 "use strict";
-import DynamicElements from "./dynamicElements.js";
 import DisplayObject from "./displayObject.js";
+import Pacman from "./pacman.js";
+import Ghost from "./ghost.js";
 import Wall from "./wall.js";
 import Food from "./food.js";
 import {
@@ -14,6 +15,36 @@ export {
     walls
 };
 
+/*let openMusic = document.querySelector(".opening"); - музыка играет 
+сразу при нажатии в любом месте
+document.addEventListener("click", musicPlay);
+function musicPlay() {
+    openMusic.play();
+    document.removeEventListener("click", musicPlay);
+}
+*/
+let openMusic = document.querySelector(".opening"); //музыка играет после нажатия 
+//на кнопку
+document.querySelector(".modal-start").onclick = function () {
+    if (openMusic.paused == true) {
+        openMusic.play();
+    } else if (openMusic.paused == false) {
+        openMusic.pause();
+    }
+};
+const greeting = document.querySelector(".modal");
+const gameStart = document.querySelector(".modal-start");
+const navigation = document.querySelector(".navigation");
+const gameOver = document.querySelector(".game-over");
+
+gameStart.addEventListener("click", function startGame() {
+    greeting.style.display = "none";
+    navigation.classList.remove("blur");
+});
+//gameStart.removeEventListener("click", function startGame() ); //невозможно вызвать
+
+let score = 0;
+let pacmanDeathTimestamp;
 const canvas = document.createElement("canvas");
 const context = canvas.getContext("2d");
 const directionEnum = Object.freeze({
@@ -24,7 +55,6 @@ const directionEnum = Object.freeze({
 });
 canvas.width = 500;
 canvas.height = 500;
-
 const size = 2;
 
 const spriteSheet = new Image();
@@ -36,11 +66,12 @@ const maze = new DisplayObject(0, 0,
     atlas.maze.x,
     atlas.maze.y);
 
-const pacman = new DynamicElements(atlas.pacman, atlas.position.pacman);
-const redGhost = new DynamicElements(atlas.redGhost, atlas.position.red);
-const pinkGhost = new DynamicElements(atlas.pinkGhost, atlas.position.pink);
-const turquoiseGhost = new DynamicElements(atlas.turquoiseGhost, atlas.position.turquoise);
-const bananaGhost = new DynamicElements(atlas.bananaGhost, atlas.position.banana);
+const pacman = new Pacman(atlas.pacman, atlas.position.pacman);
+const ghosts = [];
+ghosts.push(new Ghost(atlas.redGhost, atlas.position.red));
+ghosts.push(new Ghost(atlas.pinkGhost, atlas.position.pink));
+ghosts.push(new Ghost(atlas.turquoiseGhost, atlas.position.turquoise));
+ghosts.push(new Ghost(atlas.bananaGhost, atlas.position.banana));
 const walls = [];
 atlas.maze.walls.forEach(element => {
     walls.push(new Wall(element));
@@ -62,21 +93,27 @@ atlas.maze.foods.forEach(atlasFood => {
 console.log(foods);
 
 spriteSheet.onload = (timestamp) => {
-    console.log(timestamp);
+    //console.log(timestamp);
     render(timestamp);
 }
 
 function render(timestamp) {
-    console.log(timestamp);
+    //console.log(timestamp);
     requestAnimationFrame((timestamp) => render(timestamp));
     clearCanvas();
     drawBackground();
     drawFood();
     drawPacman(timestamp);
-    drawRedGhost(timestamp);
-    drawPinkGhost(timestamp);
-    drawTurquoiseGhost(timestamp);
-    drawBananaGhost(timestamp);
+    if (pacmanDeathTimestamp !== undefined && pacmanDeathTimestamp + 1500 < timestamp) {
+
+
+        gameOver.style.display = "block";
+
+
+    }
+    ghosts.forEach(ghost => {
+        ghost.drawAnimation(timestamp);
+    });
 
 }
 
@@ -90,52 +127,55 @@ function drawBackground() {
 
 function drawFood() {
     for (let i = 0; i < foods.length; i++) {
+
         if (foods[i].collisionCheck(pacman)) {
             foods.splice(i, 1);
+            score++;
+
         } else {
             foods[i].draw();
         }
+        document.querySelector(".score").innerHTML = "Очки: " + score * 10;
     }
 }
 
 function drawPacman(timestamp) {
     pacman.drawAnimation(timestamp);
+    if (pacman.pacmanDeathCheck(ghosts)) {
+        if (pacmanDeathTimestamp == undefined) {
+            pacmanDeathTimestamp = timestamp;
+        }
+        pacman.alive = false;
+        ghosts.forEach(ghost => {
+            ghost.frozen = true;
+        });
+    };
+
 }
 
-function drawRedGhost(timestamp) {
-    redGhost.drawAnimation(timestamp);
-}
-
-function drawPinkGhost(timestamp) {
-    pinkGhost.drawAnimation(timestamp);
-}
-
-function drawTurquoiseGhost(timestamp) {
-    turquoiseGhost.drawAnimation(timestamp);
-}
-
-function drawBananaGhost(timestamp) {
-    bananaGhost.drawAnimation(timestamp);
-}
 
 document.addEventListener('keydown', function (event) {
     switch (event.key) {
         case "Down": // IE/Edge specific value
         case "ArrowDown":
-            pacman.direction = directionEnum.DOWN;
+            pacman.nextDirection = directionEnum.DOWN;
             break;
         case "Up": // IE/Edge specific value
         case "ArrowUp":
-            pacman.direction = directionEnum.UP;
+            //pacman.direction = directionEnum.UP;
+            pacman.nextDirection = directionEnum.UP;
             break;
         case "Left": // IE/Edge specific value
         case "ArrowLeft":
-            pacman.direction = directionEnum.LEFT;
+            pacman.nextDirection = directionEnum.LEFT;
             break;
         case "Right": // IE/Edge specific value
         case "ArrowRight":
-            pacman.direction = directionEnum.RIGHT;
+            pacman.nextDirection = directionEnum.RIGHT;
             break;
     }
 })
+
+
+
 document.body.append(canvas);

@@ -1,13 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <title>Pacman</title>
 </head>
+
 <body>
+    <div class="navigation blur">
+    <p class="score"></p>
+    <button class="btn pause" type="button" aria-label="пауза">Пауза</button>
+    </div>
+    <section class="modal">
+        <img class="logo" src="sets/pacman-logo.svg" width="500" height="200" alt="Логотип Pacman">
+        <div class="info">
+            <h2 class="modal-text">Сыграем в Pacman?</h2>
+            <p class="rules">Правила просты: съешь все точки в лабиринте, избежав встречи с привидениями!</p>
+        </div> <button class="modal-start" type="button" aria-label="Начало игры">Играть!</button>
+    </section>
+    <section class="game-over">
+        <h2 class="game-over-text">Game over</h2>
+        <p class="game-over-question">Жаль, но вы проиграли. <br> Хотите начать новую игру?</p>
+        <button class="modal-start" type="button" aria-label="Начало новой игры">Новая игра</button>
+    </section>
+    <audio class="opening" autoplay>
+        <source src="/sounds/audio_opening_song.mp3" type="audio/mpeg">
+    </audio>
+
     <script type="module" src="src/main.js"></script>
 </body>
+
 </html>

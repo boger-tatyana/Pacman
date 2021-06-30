@@ -4,20 +4,24 @@ import {
 } from "../atlas.js";
 import DisplayObject from "./displayObject.js";
 import {
-    directionEnum, size, walls
+    directionEnum,
+    size,
+    walls
 } from "./main.js";
 import Food from "./food.js";
 
-export default class DynamicElements {
+export default class DynamicElement {
     constructor(atlasElement = [], position = {}) {
         this.frameNumber = 0;
         this.frameStartTimestamp = 0;
         this.direction = position.direction;
-        this.duration = atlasElement[0].duration;
+        this.duration = atlasElement[0].duration / atlasElement[0].frames.length;
         this.width = atlasElement[0].frames[0].width * size;
         this.height = atlasElement[0].frames[0].height * size;
         this.coordinateX = position.x * size;
         this.coordinateY = position.y * size;
+        this.nextDirection = null;
+        this.frozen = false;
         atlasElement.forEach(element => {
             if (element.name === "right") {
                 this.framesRight = [];
@@ -79,8 +83,46 @@ export default class DynamicElements {
         });
     }
 
+
     drawAnimation(timestamp) {
         let currentDirectionFrames;
+        this.newCoordinateX = this.coordinateX;
+        this.newCoordinateY = this.coordinateY;
+
+        if (this.nextDirection !== null && this.nextDirection !== undefined) {
+            switch (this.nextDirection) {
+                case directionEnum.RIGHT:
+                    currentDirectionFrames = this.framesRight;
+                    this.newCoordinateX += 5;
+                    break;
+                case directionEnum.LEFT:
+                    currentDirectionFrames = this.framesLeft;
+                    this.newCoordinateX -= 5;
+                    break;
+                case directionEnum.UP:
+                    currentDirectionFrames = this.framesUp;
+                    this.newCoordinateY -= 5;
+                    break;
+                case directionEnum.DOWN:
+                    currentDirectionFrames = this.framesDown;
+                    this.newCoordinateY += 5;
+                    break;
+                default:
+                    break;
+            }
+
+            let collision = false;
+            walls.forEach(wall => {
+                if (wall.collisionCheck(this)) {
+                    collision = true;
+                }
+            });
+
+            if (!collision) {
+                this.direction = this.nextDirection;
+                this.nextDirection = null;
+            }
+        }
         this.newCoordinateX = this.coordinateX;
         this.newCoordinateY = this.coordinateY;
         switch (this.direction) {
@@ -104,8 +146,6 @@ export default class DynamicElements {
                 break;
         }
 
-      
-
         walls.forEach(wall => {
             if (wall.collisionCheck(this)) {
                 this.direction = null;
@@ -119,11 +159,11 @@ export default class DynamicElements {
 
         if (this.direction === null || this.direction === undefined) {
             // если у динамик элеманта нет направления(пакман),
-         // то выполнение метода прерывается и мы никуда не двигаем его.
+            // то выполнение метода прерывается и мы никуда не двигаем его.
             this.framesRight[0].drawMovingElement(this.coordinateX, this.coordinateY);
             return;
-        } 
-        
+        }
+
         currentDirectionFrames[this.frameNumber].drawMovingElement(this.coordinateX, this.coordinateY);
         if (timestamp - this.frameStartTimestamp >= this.duration) {
             this.frameStartTimestamp = timestamp;

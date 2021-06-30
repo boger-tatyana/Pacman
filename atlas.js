@@ -5,26 +5,26 @@ export const atlas = {
             "frames": [{
                     "x": 457,
                     "y": 17,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 17,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 489,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 17,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 }
             ]
         },
@@ -44,26 +44,26 @@ export const atlas = {
             "frames": [{
                     "x": 457,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 489,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 }
             ]
         },
@@ -83,26 +83,26 @@ export const atlas = {
             "frames": [{
                     "x": 457,
                     "y": 33,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 33,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 489,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 33,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 }
             ]
         },
@@ -122,26 +122,26 @@ export const atlas = {
             "frames": [{
                     "x": 457,
                     "y": 49,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 49,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 489,
                     "y": 1,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 },
                 {
                     "x": 473,
                     "y": 49,
-                    "width": 13,
-                    "height": 13
+                    "width": 15,
+                    "height": 15
                 }
             ]
         },
