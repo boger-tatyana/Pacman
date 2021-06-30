@@ -35,20 +35,25 @@ export default class Ghost extends DynamicElement {
             default:
                 break;
         }
-
+        //check ghosts collision with walls
         let initialCollision = false;
         walls.forEach(wall => {
             if (wall.collisionCheck(this)) {
                 initialCollision = true;
+                //delete current and opposite directions from potential direction
                 let directions = Object.values(directionEnum);
+                //get current direction index and delete it
                 let index = directions.indexOf(this.direction);
                 directions.splice(index, 1);
+                //get opposite direction index and delete it
                 let oppositeDirection = this.getOppositeDirection(this.direction);
                 index = directions.indexOf(oppositeDirection);
                 directions.splice(index, 1);
+                //random chose index for next direction
                 let chosenIndex = this.getRandomIntInclusive(0, 1);
                 this.direction = directions[chosenIndex];
-
+                
+                //first attempt to turn ghost
                 this.newCoordinateX = this.coordinateX;
                 this.newCoordinateY = this.coordinateY;
                 switch (this.direction) {
@@ -71,7 +76,8 @@ export default class Ghost extends DynamicElement {
                     default:
                         break;
                 }
-
+                
+                //check collision with chosen direction
                 let collision = false;
                 walls.forEach(wall => {
                     if (wall.collisionCheck(this)) {
@@ -88,6 +94,8 @@ export default class Ghost extends DynamicElement {
                 }
             }
         });
+
+        //if first collision didn't happen, just move
         if (initialCollision == false && !this.frozen) {
             this.coordinateX = this.newCoordinateX;
             this.coordinateY = this.newCoordinateY;

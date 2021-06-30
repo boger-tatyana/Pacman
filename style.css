@@ -13,41 +13,26 @@
   body,
   .game-start,
   .info {
-      display: -webkit-box;
-      display: -ms-flexbox;
       display: flex;
 
   }
 
   body {
       flex-direction: column;
-      -webkit-box-sizing: border-box;
       box-sizing: border-box;
       min-width: 500px;
       padding-top: 50px;
       background-color: var(--color-black);
-      -webkit-box-align: center;
-      -ms-flex-align: center;
       align-items: center;
-      -webkit-box-pack: center;
-      -ms-flex-pack: center;
       justify-content: center;
       font-family: "Press Start 2p", "Arial", sans-serif;
       color: var(--special-yellow);
       text-shadow: var(--color-black) 1px 1px 1px;
   }
 
-  .navigation {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      width: 380px;
-  }
 
-  .score,
-  .pause {
+  .score {
       text-transform: uppercase;
-
   }
 
   .btn {
@@ -69,10 +54,6 @@
   }
 
   .blur {
-      -webkit-filter: blur(5px);
-      -moz-filter: blur(5px);
-      -o-filter: blur(5px);
-      -ms-filter: blur(5px);
       filter: blur(5px);
   }
 
@@ -81,27 +62,16 @@
   }
 
 
-  .game-over {
-      position: fixed;
+  .game-over,
+  .win {
       display: none;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      width: 460px;
-      height: 500px;
-      margin: auto;
-      padding-left: 80px;
-      padding-right: 80px;
-      border-top: 30px solid var(--basic-red);
-      box-shadow: 0px 20px 40px var(--color-black-feedback);
-      background: linear-gradient(to bottom, var(--color-white) 74%, var(--basic-background-button) 26%);
   }
 
 
-  .modal {
+  .modal,
+  .game-over,
+  .win {
       position: fixed;
-      display: block;
       top: 0;
       right: 0;
       bottom: 0;
@@ -116,7 +86,10 @@
       background: linear-gradient(to bottom, var(--color-black-light) 74%, var(--basic-background-button) 26%);
   }
 
-  .modal-start {
+
+  .modal-start,
+  .modal-new-start,
+  .modal-new-start-2 {
       position: absolute;
       display: block;
       z-index: 3;
@@ -133,7 +106,9 @@
       color: var(--color-black);
   }
 
-  .modal-start:hover {
+  .modal-start:hover,
+  .modal-new-start:hover,
+  .modal-new-start-2:hover {
       background-color: var(--color-dark-red);
       animation: shake 1s;
   }
@@ -153,7 +128,8 @@
       margin-top: 10px;
   }
 
-  .game-over-text {
+  .game-over-text,
+  .win-text {
       display: block;
       font-size: 40px;
       margin: 0 auto;
@@ -164,16 +140,19 @@
   }
 
   .rules,
-  .game-over-question {
+  .game-over-question,
+  .win-question {
       line-height: 1.5;
   }
 
-  .game-over-question {
+  .game-over-question,
+  .win-question{
       padding-left: 80px;
   }
 
   .info,
-  .game-over {
+  .game-over,
+  .win {
       z-index: 2;
       position: absolute;
       bottom: 150px;

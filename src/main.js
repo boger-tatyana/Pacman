@@ -15,37 +15,20 @@ export {
     walls
 };
 
-/*let openMusic = document.querySelector(".opening"); - музыка играет 
-сразу при нажатии в любом месте
-document.addEventListener("click", musicPlay);
-function musicPlay() {
-    openMusic.play();
-    document.removeEventListener("click", musicPlay);
-}
-*/
-let openMusic = document.querySelector(".opening"); //музыка играет после нажатия 
-//на кнопку
-document.querySelector(".modal-start").onclick = function () {
-    if (openMusic.paused == true) {
-        openMusic.play();
-    } else if (openMusic.paused == false) {
-        openMusic.pause();
-    }
-};
+const openMusic = document.querySelector(".opening");
+const eatingMusic = document.querySelector(".eating");
+const deathMusic = document.querySelector(".die");
 const greeting = document.querySelector(".modal");
 const gameStart = document.querySelector(".modal-start");
-const navigation = document.querySelector(".navigation");
+const myScore = document.querySelector(".score");
 const gameOver = document.querySelector(".game-over");
-
-gameStart.addEventListener("click", function startGame() {
-    greeting.style.display = "none";
-    navigation.classList.remove("blur");
-});
-//gameStart.removeEventListener("click", function startGame() ); //невозможно вызвать
-
-let score = 0;
-let pacmanDeathTimestamp;
+const newGameStart = document.querySelector(".modal-new-start");
+const newGameStart2 = document.querySelector(".modal-new-start-2");
+const winGame = document.querySelector(".win");
+const waitingStart = 5500;
 const canvas = document.createElement("canvas");
+canvas.width = 500;
+canvas.height = 500;
 const context = canvas.getContext("2d");
 const directionEnum = Object.freeze({
     LEFT: "left",
@@ -53,10 +36,7 @@ const directionEnum = Object.freeze({
     RIGHT: "right",
     DOWN: "down"
 });
-canvas.width = 500;
-canvas.height = 500;
 const size = 2;
-
 const spriteSheet = new Image();
 spriteSheet.src = '../sets/original.png';
 
@@ -68,53 +48,104 @@ const maze = new DisplayObject(0, 0,
 
 const pacman = new Pacman(atlas.pacman, atlas.position.pacman);
 const ghosts = [];
+const walls = [];
+atlas.maze.walls.forEach(element => {
+    walls.push(new Wall(element));
+});
+
+let score = 0;
+let pacmanDeathTimestamp;
+let foods = [];
+
 ghosts.push(new Ghost(atlas.redGhost, atlas.position.red));
 ghosts.push(new Ghost(atlas.pinkGhost, atlas.position.pink));
 ghosts.push(new Ghost(atlas.turquoiseGhost, atlas.position.turquoise));
 ghosts.push(new Ghost(atlas.bananaGhost, atlas.position.banana));
-const walls = [];
-atlas.maze.walls.forEach(element => {
-    walls.push(new Wall(element));
 
+document.querySelector(".modal-start").onclick = function () {
+    startGame();
+    render(0);
+};
+
+gameStart.addEventListener("click", function startGame() {
+    greeting.style.display = "none";
+    myScore.classList.remove("blur");
 });
-console.log(walls);
 
-let foods = [];
-atlas.maze.foods.forEach(atlasFood => {
-    foods.push(new Food(
-        atlasFood.x,
-        atlasFood.y,
-        atlasFood.width,
-        atlasFood.height,
-        atlasFood.x,
-        atlasFood.y
-    ));
+newGameStart2.addEventListener("click", function startNewGame() {
+    winGame.style.display = "none";
+    startGame();
 });
-console.log(foods);
 
-spriteSheet.onload = (timestamp) => {
-    //console.log(timestamp);
-    render(timestamp);
+newGameStart.addEventListener("click", function startNewGame() {
+    gameOver.style.display = "none";
+    startGame();
+});
+
+ //add event listener for pacman control
+document.addEventListener('keydown', function (event) {
+    switch (event.key) {
+        case "Down":
+        case "ArrowDown":
+            pacman.nextDirection = directionEnum.DOWN;
+            break;
+        case "Up": // IE/Edge specific value
+        case "ArrowUp":
+            pacman.nextDirection = directionEnum.UP;
+            break;
+        case "Left": // IE/Edge specific value
+        case "ArrowLeft":
+            pacman.nextDirection = directionEnum.LEFT;
+            break;
+        case "Right": // IE/Edge specific value
+        case "ArrowRight":
+            pacman.nextDirection = directionEnum.RIGHT;
+            break;
+    }
+});
+
+document.body.append(canvas);
+
+//Functions:
+
+function startGame() {
+    openMusic.play();
+    foods = [];
+    atlas.maze.foods.forEach(atlasFood => {
+        foods.push(new Food(
+            atlasFood.x,
+            atlasFood.y,
+            atlasFood.width,
+            atlasFood.height,
+            atlasFood.x,
+            atlasFood.y
+        ));
+    });
+    pacman.abandonState();
+    pacmanDeathTimestamp = undefined;
+    score = 0;
+    ghosts.forEach(ghost => {
+        ghost.abandonState();
+    });
 }
 
 function render(timestamp) {
-    //console.log(timestamp);
     requestAnimationFrame((timestamp) => render(timestamp));
     clearCanvas();
     drawBackground();
     drawFood();
     drawPacman(timestamp);
     if (pacmanDeathTimestamp !== undefined && pacmanDeathTimestamp + 1500 < timestamp) {
-
-
         gameOver.style.display = "block";
-
-
+    }
+    if (timestamp > waitingStart && pacman.alive) {
+        ghosts.forEach(ghost => {
+            ghost.frozen = false;
+        });
     }
     ghosts.forEach(ghost => {
         ghost.drawAnimation(timestamp);
     });
-
 }
 
 function clearCanvas() {
@@ -127,11 +158,18 @@ function drawBackground() {
 
 function drawFood() {
     for (let i = 0; i < foods.length; i++) {
-
         if (foods[i].collisionCheck(pacman)) {
             foods.splice(i, 1);
             score++;
-
+            eatingMusic.play();
+            if (foods.length < 200) {
+                winGame.style.display = "block";
+                ghosts.forEach(ghost => {
+                    ghost.frozen = true;
+                });
+                pacman.direction = null;
+                pacman.nextDirection = null;
+            }
         } else {
             foods[i].draw();
         }
@@ -145,37 +183,12 @@ function drawPacman(timestamp) {
         if (pacmanDeathTimestamp == undefined) {
             pacmanDeathTimestamp = timestamp;
         }
+        if (pacman.alive) {
+            deathMusic.play();
+        }
         pacman.alive = false;
         ghosts.forEach(ghost => {
             ghost.frozen = true;
         });
-    };
-
-}
-
-
-document.addEventListener('keydown', function (event) {
-    switch (event.key) {
-        case "Down": // IE/Edge specific value
-        case "ArrowDown":
-            pacman.nextDirection = directionEnum.DOWN;
-            break;
-        case "Up": // IE/Edge specific value
-        case "ArrowUp":
-            //pacman.direction = directionEnum.UP;
-            pacman.nextDirection = directionEnum.UP;
-            break;
-        case "Left": // IE/Edge specific value
-        case "ArrowLeft":
-            pacman.nextDirection = directionEnum.LEFT;
-            break;
-        case "Right": // IE/Edge specific value
-        case "ArrowRight":
-            pacman.nextDirection = directionEnum.RIGHT;
-            break;
     }
-})
-
-
-
-document.body.append(canvas);
+}
